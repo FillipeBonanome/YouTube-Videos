@@ -2,6 +2,7 @@
 	Chain Lightning
 	- Cria um raio que quica de criatura para criatura.
 	Requer: createPath(pos_a, pos_b, steps)
+	v1.1 --> Não atravessa mais paredes.
 ]]--
 
 function ricochet(cid, target, last_position, bounces, animation, distance, f)
@@ -13,7 +14,10 @@ function ricochet(cid, target, last_position, bounces, animation, distance, f)
 	local creatures = {}
 	for i = 1, #spectators do
 		if spectators[i] ~= cid and spectators[i] ~= target then
-			table.insert(creatures, spectators[i])
+			local spectator_position = spectators[i]:getPosition()
+			if isSightClear(last_position, spectator_position) then
+				table.insert(creatures, spectators[i])
+			end
 		end
 	end
 	
@@ -27,7 +31,7 @@ function ricochet(cid, target, last_position, bounces, animation, distance, f)
 		addEvent(function(creature_id)
 			if Creature(creature_id) then
 				local cid = Creature(creature_id)
-				ricochet(cid, random_creature, random_creature_position, bounces, animation, distance, f)
+				ricochet(cid, random_creature, last_position, bounces, animation, distance, f)
 			end
 		end, 150, cid:getId())
 	end
